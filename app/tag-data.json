@@ -1,8 +1,5 @@
 {
-  "markdown": 1,
-  "code": 1,
-  "guide": 4,
-  "next-js": 4,
+  "next-js": 3,
   "tailwind": 2,
-  "multi-author": 1
+  "guide": 4
 }
