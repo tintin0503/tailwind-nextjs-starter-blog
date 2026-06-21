@@ -3,72 +3,99 @@ title: AWS LoadBalancer
 date: '2026-Jun-20'
 tags: ['AWS', 'SSA']
 draft: false
-summary: 'AWS Elastic Load Balancing (ELB) là dịch vụ cân bằng tải, giúp tự động phân phối lưu lượng truy cập đến nhiều tài nguyên như EC2, ECS, EKS hoặc Lambda nhằm tăng tính sẵn sàng, khả năng mở rộng và khả năng chịu lỗi của ứng dụng'
+summary: 'AWS Elastic Load Balancing (ELB) là dịch vụ cân bằng tải, giúp tự động phân phối lưu lượng truy cập đến nhiều tài nguyên như EC2, ECS, EKS hoặc Lambda
+ nhằm tăng tính sẵn sàng, khả năng mở rộng và khả năng chịu lỗi của ứng dụng'
 authors: ['Quan Bui']
 ---
 
-import { AUTHORS } from '../authors/constants'
-
 # Introduction
 
-The tailwind starter blog has out of the box support for [Next.js's built-in image component](https://nextjs.org/docs/api-reference/next/image) and automatically swaps out default image tags in markdown or mdx documents to use the Image component provided.
+`AWS Elastic Load Balancing (ELB)` là dịch vụ cân bằng tải được quản lý hoàn toàn trên AWS,
+giúp tự động phân phối lưu lượng truy cập đến nhiều tài nguyên như EC2, ECS, EKS hoặc Lambda nhằm tăng tính sẵn sàng cao (`High Availability`), khả năng mở rộng (`Scalability`)
+và khả năng chịu lỗi của ứng dụng.
 
-# Usage
+ELB cung cấp nhiều loại load balancer như `Application Load Balancer (ALB)`, `Network Load Balancer (NLB)` và `Gateway Load Balancer (GWLB)`
 
-To use in a new page route / javascript file, simply import the image component and call it e.g.
+# 1. Scalability & HA
 
-```js
-import Image from 'next/image'
+• `Scalability` nghĩa là một application/system có thể xử lý tải trọng lớn hơn bằng cách thích ứng.
 
-function Home() {
-  return (
-    <>
-      <h1>My Homepage</h1>
-      <Image src="/me.png" alt="Picture of the author" width={500} height={500} />
-      <p>Welcome to my homepage!</p>
-    </>
-  )
-}
+• Có 2 loại Scalability:
+    - Vertical Scalability
+    - Horizontal Scalability (= elasticity)
 
-export default Home
-```
+Khả năng mở rộng (`Scalability`) có liên quan nhưng khác với tính sẵn sàng cao (`High Availability - HA`).
 
-For a markdown file, the default image tag can be used and the default `img` tag gets replaced by the `Image` component in the build process.
+## 1.1. Vertical Scalability.
 
-Assuming we have a file called `ocean.jpg` in `static/images/ocean.jpg`, the following line of code would generate the optimized image.
+<Image alt="vertical" src="/static/images/aws/vertical-scalability.png" width={180} height={70} />
 
-```
-![ocean](/static/images/ocean.jpg)
-```
+- Scale up / Scale down
+- Nghĩa là tăng giảm về size của instance (RAM, CPU). Ví dụ tăng từ `T2.micro` -> `M5.large`
+- Ví dụ: RDS, ElastiCache là các service có thể scale vertically
+- Khi vertical scale, thì cần phải stop instance để nâng cấp
 
-Alternatively, since we are using mdx, we can just use the image component directly! Note, that you would have to provide a fixed width and height. The `img` tag method parses the dimension automatically.
+## 1.2. Horizontal Scalability
 
-```js
-<Image alt="ocean" src="/static/images/ocean.jpg" width={256} height={128} />
-```
+<Image alt="vertical" src="/static/images/aws/horizontal-scalability.png" width={450} height={100} />
 
-_Note_: If you try to save the image, it is in webp format, if your browser supports it!
+- Scale in / Scale out
+- Nghĩa là tăng/giảm số lượng instance cho ứng dụng của bạn
+- Dùng nhều cho các hệ thống phân tán (`distributed system`)
+- Hay dùng cho web application / modern application
+- Tăng theo chều ngang thì không cần phải stop instance
 
-![ocean](/static/images/ocean.jpeg)
+## 1.3. High Availability - Khả năng sẵn sàng
 
-Photo by [YUCAR FotoGrafik](https://unsplash.com/@yucar?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
-on [Unsplash](https://unsplash.com/s/photos/sea?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+- `HA` thường đi đôi với `Horizontal scaling`
+- `HA` means running your Application / System  in at least 2 data center (`Availability Zone`)
+- Mục đích của `HA` là: `Duy trì hoạt động khi data center lost`.
+- `HA` thụ động (passive), ví dụ đối với RDS Multi AZ
+- `HA` sẽ được kích hoạt đối với horizontal scaling
 
-# Benefits
+## 1.4. High Availability & Scalability For EC2
 
-- Smaller image size with Webp (~30% smaller than jpeg)
-- Responsive images - the correct image size is served based on the user's viewport
-- Lazy loading - images load as they are scrolled to the viewport
-- Avoids [Cumulative Layout Shift](https://web.dev/cls/)
-- Optimization on demand instead of build-time - no increase in build time!
+<Image alt="vertical" src="/static/images/aws/ha-scalling.png" width={450} height={100} />
 
-# Limitations
+- `Vertical Scaling`: Increase instance size (= scale up / down)
+	+ From: t2.nano - 0.5G of RAM, 1 vCPU
+	+ To: u-12tb1.metal – 12.3 TB of RAM, 448 vCPUs
+- `Horizontal Scaling`: Increase number of instances (= scale out / in)
+	+ Auto Scaling Group
+	+ Load Balancer
+- `High Availability`: Run instances for the same application across multi AZ
+	+  Auto Scaling Group multi AZ
+	+ Load Balancer multi AZ
 
-- Due to the reliance on `next/image`, unless you are using an external image CDN like Cloudinary or Imgix, it is practically required to use Vercel for hosting. This is because the component acts like a serverless function that calls a highly optimized image CDN.
+# 2. What is load balancing?
+    * Load Balances are servers that forward traffic to multiple servers (e.g: EC2 instances)
 
-  If you do not want to be tied to Vercel, you can remove `imgToJsx` in `remarkPlugins` in `lib/mdx.js`. This would avoid substituting the default `img` tag.
+### Why use a load balancer?
+	- Spread load across multiple downstream instances
+	- Expose a single point of access (DNS) to your application
+	- Seamlessly handle failures of downstream instances
+	- Do regular health checks to your instances
+	- Provide SSL termination (HTTPS) for your websites
+	- Enforce stickiness with cookies
+	- High availability across zones
+	- Separate public traffic from private traffic
 
-  Alternatively, one could wait for image optimization at build time to be supported. A different library, [next-optimized-images](https://github.com/cyrilwanner/next-optimized-images) does that, although it requires transforming the images through webpack which is not done here.
+### Why use an Elastic Load Balancer?
+	- An Elastic Load Balancer is a managed load balancer
+        + AWS guarantees that it will be working
+        + AWS takes care of upgrades, maintenance, high availability
+        + AWS provides only a few configuration knobs
 
-- Images from external links are not passed through `next/image`
-- All images have to be stored in the `public` folder e.g `/static/images/ocean.jpeg`
+	-` It is integrated with many AWS offerings / services`
+        + EC2, EC2 Auto Scaling Groups, Amazon ECS
+        + AWS Certificate Manager (ACM), CloudWatch
+        + Route 53, AWS WAF, AWS Global Accelerator
+
+## Health Checks
+<Image alt="vertical" src="/static/images/aws/alb-health-checks.png" width={450} height={100} />
+- Health Checks are crucial for Load Balancers
+- They enable the load balancer to know if instances it forwards traffic to are available to reply to requests
+- The health check is done on a port and a route (/health is common)
+- If the response is not 200 (OK), then the instance is unhealthy
+
+## Load Balancer Security Groups
