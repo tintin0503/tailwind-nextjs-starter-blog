@@ -1,0 +1,101 @@
+---
+title: AWS LoadBalancer
+date: '2026-Jun-20'
+tags: ['AWS', 'SSA']
+draft: false
+summary: 'AWS Elastic Load Balancing (ELB) là dịch vụ cân bằng tải, giúp tự động phân phối lưu lượng truy cập đến nhiều tài nguyên như EC2, ECS, EKS hoặc Lambda
+ nhằm tăng tính sẵn sàng, khả năng mở rộng và khả năng chịu lỗi của ứng dụng'
+authors: ['Quan Bui']
+---
+
+# Introduction
+
+`AWS Elastic Load Balancing (ELB)` là dịch vụ cân bằng tải được quản lý hoàn toàn trên AWS,
+giúp tự động phân phối lưu lượng truy cập đến nhiều tài nguyên như EC2, ECS, EKS hoặc Lambda nhằm tăng tính sẵn sàng cao (`High Availability`), khả năng mở rộng (`Scalability`)
+và khả năng chịu lỗi của ứng dụng.
+
+ELB cung cấp nhiều loại load balancer như `Application Load Balancer (ALB)`, `Network Load Balancer (NLB)` và `Gateway Load Balancer (GWLB)`
+
+# 1. Scalability & HA
+
+• `Scalability` nghĩa là một application/system có thể xử lý tải trọng lớn hơn bằng cách thích ứng.
+
+• Có 2 loại Scalability:
+    - Vertical Scalability
+    - Horizontal Scalability (= elasticity)
+
+Khả năng mở rộng (`Scalability`) có liên quan nhưng khác với tính sẵn sàng cao (`High Availability - HA`).
+
+## 1.1. Vertical Scalability.
+
+<Image alt="vertical" src="/static/images/aws/vertical-scalability.png" width={180} height={70} />
+
+- Scale up / Scale down
+- Nghĩa là tăng giảm về size của instance (RAM, CPU). Ví dụ tăng từ `T2.micro` -> `M5.large`
+- Ví dụ: RDS, ElastiCache là các service có thể scale vertically
+- Khi vertical scale, thì cần phải stop instance để nâng cấp
+
+## 1.2. Horizontal Scalability
+
+<Image alt="vertical" src="/static/images/aws/horizontal-scalability.png" width={450} height={100} />
+
+- Scale in / Scale out
+- Nghĩa là tăng/giảm số lượng instance cho ứng dụng của bạn
+- Dùng nhều cho các hệ thống phân tán (`distributed system`)
+- Hay dùng cho web application / modern application
+- Tăng theo chều ngang thì không cần phải stop instance
+
+## 1.3. High Availability - Khả năng sẵn sàng
+
+- `HA` thường đi đôi với `Horizontal scaling`
+- `HA` means running your Application / System  in at least 2 data center (`Availability Zone`)
+- Mục đích của `HA` là: `Duy trì hoạt động khi data center lost`.
+- `HA` thụ động (passive), ví dụ đối với RDS Multi AZ
+- `HA` sẽ được kích hoạt đối với horizontal scaling
+
+## 1.4. High Availability & Scalability For EC2
+
+<Image alt="vertical" src="/static/images/aws/ha-scalling.png" width={450} height={100} />
+
+- `Vertical Scaling`: Increase instance size (= scale up / down)
+	+ From: t2.nano - 0.5G of RAM, 1 vCPU
+	+ To: u-12tb1.metal – 12.3 TB of RAM, 448 vCPUs
+- `Horizontal Scaling`: Increase number of instances (= scale out / in)
+	+ Auto Scaling Group
+	+ Load Balancer
+- `High Availability`: Run instances for the same application across multi AZ
+	+  Auto Scaling Group multi AZ
+	+ Load Balancer multi AZ
+
+# 2. What is load balancing?
+    * Load Balances are servers that forward traffic to multiple servers (e.g: EC2 instances)
+
+### Why use a load balancer?
+	- Spread load across multiple downstream instances
+	- Expose a single point of access (DNS) to your application
+	- Seamlessly handle failures of downstream instances
+	- Do regular health checks to your instances
+	- Provide SSL termination (HTTPS) for your websites
+	- Enforce stickiness with cookies
+	- High availability across zones
+	- Separate public traffic from private traffic
+
+### Why use an Elastic Load Balancer?
+	- An Elastic Load Balancer is a managed load balancer
+        + AWS guarantees that it will be working
+        + AWS takes care of upgrades, maintenance, high availability
+        + AWS provides only a few configuration knobs
+
+	-` It is integrated with many AWS offerings / services`
+        + EC2, EC2 Auto Scaling Groups, Amazon ECS
+        + AWS Certificate Manager (ACM), CloudWatch
+        + Route 53, AWS WAF, AWS Global Accelerator
+
+## Health Checks
+<Image alt="vertical" src="/static/images/aws/alb-health-checks.png" width={450} height={100} />
+- Health Checks are crucial for Load Balancers
+- They enable the load balancer to know if instances it forwards traffic to are available to reply to requests
+- The health check is done on a port and a route (/health is common)
+- If the response is not 200 (OK), then the instance is unhealthy
+
+## Load Balancer Security Groups

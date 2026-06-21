@@ -1,4 +1,6 @@
 {
+  "aws": 1,
+  "ssa": 1,
   "next-js": 3,
   "tailwind": 2,
   "guide": 4
