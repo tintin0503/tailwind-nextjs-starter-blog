@@ -3,8 +3,8 @@ title: AWS LoadBalancer
 date: '2026-Jun-20'
 tags: ['AWS', 'SSA']
 draft: false
-summary: 'AWS Elastic Load Balancing (ELB) là dịch vụ cân bằng tải, giúp tự động phân phối lưu lượng truy cập đến nhiều tài nguyên như EC2, ECS, EKS hoặc Lambda
- nhằm tăng tính sẵn sàng, khả năng mở rộng và khả năng chịu lỗi của ứng dụng'
+summary: 'Auto Scaling Group (ASG) là một nhóm các máy chủ (cloud server hoặc instance)
+được gộp lại để tự động điều chỉnh số lượng dựa trên nhu cầu thực tế của ứng dụng'
 authors: ['Quan Bui']
 ---
 
@@ -111,10 +111,9 @@ Khả năng mở rộng (`Scalability`) có liên quan nhưng khác với tính 
 <Image alt="vertical" src="/static/images/aws/types-elb.png" width={450} height={100} />
 
 - `Classic Load Balancer` là cũ lắm rồi, bây giờ ko dùng nữa
-- `Application LB`: dùng tới 70% trên thực tế, hoạt động ở `Layer 7 (HTTP, HTTPS)`
+- `Applicatioin LB`: dùng tới 70% trên thực tế, hoạt động ở `Layer 7 (HTTP, HTTPS)`
 - `Network LB`: dùng tới 30%, hoạt động ở `layer 4 (TCP, UDP)`
 - `Gateway LB`: rất hiếm khi dùng
 
 [Lab Practice](https://blog.cloudmentor.pro/posts/elb-asg-01)
 
-Aws loadbalancer thường đi đôi với Auto Scalling group
