@@ -63,6 +63,9 @@ authors: ['Quan Bui']
 - In AWS, appy the least privilege principle: don't give more permissions than a user needs
 <Image alt="vertical" src="/static/images/aws/policies.png" width={450} height={100} />
 
+- Nếu 1 policy deny 1 serivce, mà 1 policy khác có cho phép service đó, thì cuối cùng vẫn là deny
+- Nếu là User thuộc 1 policy mà dc allow service A, thuộc 1 policy khác được allow service B -> thì user đó dc allow cả 2 service A + B
+
 ### IAM Policies Structure.
 - Consists of:
  + `Version`: cố định "2012-10-17"
@@ -106,4 +109,65 @@ authors: ['Quan Bui']
 - Use Access Key khi dùng CLI / SDK
 - Never share IAM users & Access Keys
 
+# 3. EC2
+- EC2 = Elastic Compute Cloud
+- It mainly consists in the capability of:
+ + Renting virtual machines (EC2)
+ + Storing data on virtual drivers (EBS)
+ + Distributing load across machine (ELB)
+ + Scaling the services using an auto-scaling group (ASG)
+
+ ## EC2 - Configuration options
+
+ - OS: Linux, Window or Mac OS
+ - CPU (`*`)
+ - RAM (`*`)
+ - Storage space:
+    + Network-attached (EBS, EFS)
+    + hardware (EC2 Instance Store)
+ - Network card: speed of the card, Public IP address
+ - Firewall rules: security group (`*`)
+ - Bootstrap script(configure at first launch): EC2 User Data
+    + bootstrapping means launching commands when a machine start
+    + That script is `only run once` at the instance `first start`
+    + EC2 user data is used to automate bôt task such as:
+       + Installing updates
+       + Installing software
+       + Download common files from internet
+       + Anything you can think of
+    + EC2 User Data script rún with the root user
+
+ [EC2 Fundamentals](https://blog.cloudmentor.pro/posts/saa-s2-ec2-fundamentals)
+
+ **Naming convention**:
+ Ví dụ: `d-sg-SSA-basion-host`
+  + `d`: môi trường (d-dev, stg, production)
+  + `sg`: viet tat ten dich vu
+  + `SAA`: name project
+  + `basion-host`: ý nghĩa của tên
+
+ ## Instance Type:
+ m5.2xlarge:
+  - m: instance class
+  - 5: generation
+  -
+## Security groups
+- Control how traffic is allowed into or out of EC2 (firewall)
+- Can be attached to multiple instance
+- All `inbound` traffic is **blocked by** default
+- All outbound traffic is authorised by default
+- SG only contain allow rules
+- SG rules can reference by IP or by other Security group
+<Image alt="vertical" src="/static/images/aws/sg-firewall.png" width={450} height={100} />
+
+## Classic Ports to know:
+- 22 = SSH
+- 21 = FTP - Upload files into a file share
+- 22 = SFTP - Upload file using SSH
+- 80 = HTTP - access unsecured website
+- 443 = HTTPS - access secured website
+- 3389 = RDP - log into a windows instance
+
+## login EC2 using Session Manager
+[Quản lí kết nối SSH & RDP với Systems Manager](https://blog.cloudmentor.pro/posts/ec2-setup-ssm)
 
